@@ -1,0 +1,12 @@
+---
+- name: restart systemd resolved
+  ansible.builtin.systemd_service:
+    state: restarted
+    name: systemd-resolved
+
+- name: restart dns incusbr0 systemd-resolved
+  ansible.builtin.systemd_service:
+    state: restarted
+    enabled: true
+    daemon_reload: true
+    name: dns-incusbr0

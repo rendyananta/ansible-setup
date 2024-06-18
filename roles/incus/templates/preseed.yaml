@@ -1,0 +1,64 @@
+config: {}
+networks:
+- config:
+    ipv4.address: 10.90.184.1/24
+    ipv4.nat: "true"
+    ipv6.address: fd42:cb4a:5bf5:7301::1/64
+    ipv6.nat: "true"
+  description: ""
+  name: incusbr0
+  type: bridge
+  project: default
+storage_pools:
+- config:
+    source: /var/lib/incus/storage-pools/default
+  description: ""
+  name: default
+  driver: dir
+profiles:
+- config: {}
+  description: Default Incus profile
+  devices:
+    eth0:
+      name: eth0
+      network: incusbr0
+      type: nic
+    root:
+      path: /
+      pool: default
+      type: disk
+  name: default
+- config:
+    cloud-init.user-data: |
+      #cloud-config
+      packages:
+        - openssh-server
+      users:
+      - name: dev
+        groups: sudo
+        shell: /bin/bash
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        ssh_authorized_keys:
+        - ssh-ed25519
+    security.nesting: "true"
+  description: Remotable profile
+  devices:
+    eth0:
+      name: eth0
+      network: incusbr0
+      type: nic
+    root:
+      path: /
+      pool: default
+      type: disk
+  name: remoteable
+projects:
+- config:
+    features.images: "true"
+    features.networks: "true"
+    features.networks.zones: "true"
+    features.profiles: "true"
+    features.storage.buckets: "true"
+    features.storage.volumes: "true"
+  description: Default Incus project
+  name: default

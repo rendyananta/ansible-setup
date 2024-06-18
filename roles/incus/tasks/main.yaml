@@ -1,0 +1,71 @@
+---
+- name: Install Incus via apt
+  apt: 
+    name: incus
+
+- name: Run whoami without become.
+  command: whoami
+  changed_when: false
+  become: false
+  register: whoami
+
+- name: Append user to incus-admin group
+  user:
+    name: "{{ whoami.stdout }}"
+    groups: incus-admin
+    append: true
+
+- name: Reset connection so incus-admin group is picked up
+  meta: reset_connection
+
+- name: Check that ssh key exists
+  stat:
+    path: .ssh/lxc.id_ed25519
+  register: stat_result
+
+- name: Generate Incus user SSH key
+  command: ssh-keygen -t ed25519 -f .ssh/lxc.id_ed25519 -q -N ""
+  when: not stat_result.stat.exists
+
+- name: Creating incus restoration temporary files
+  command: mkdir -p .temp-restore-incus
+
+- name: Copying Incus preseed config
+  template: 
+    src: preseed.yaml
+    dest: .temp-restore-incus/preseed.yaml
+
+- name: Echo public ssh key
+  command: cat .ssh/lxc.id_ed25519.pub
+  register: pubkey
+
+- name: Replace authorized public ssh key into Incus preseed file
+  replace:
+    path: .temp-restore-incus/preseed.yaml
+    regexp: '(ssh-ed25519)'
+    replace: "{{ pubkey.stdout }}"
+
+- name: Init minimal Incus from template
+  shell: cat .temp-restore-incus/preseed.yaml | incus admin init --preseed
+
+- name: Remove incus restoration temporary files
+  command: rm -rf .temp-restore-incus
+
+- name: Create /etc/systemd/resolved.conf.d directory if not exist
+  ansible.builtin.file:
+    path: /etc/systemd/resolved.conf.d
+    state: directory
+
+- name: Copying Incus DNS Config resolution through systemd-resolved
+  template: 
+    src: systemd-resolved.conf.d/00-incus-domain-resolution.conf
+    dest: /etc/systemd/resolved.conf.d/00-incus-domain-resolution.conf
+
+- name: Copying Incus DNS Config resolution service through systemd-resolved
+  template: 
+    src: systemd/system/dns-incusbr0.service
+    dest: /etc/systemd/system/dns-incusbr0.service
+    mode: '755'
+  notify: 
+  - restart systemd resolved
+  - restart dns incusbr0 systemd-resolved
