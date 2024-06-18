@@ -20,4 +20,12 @@ if [ "$(which ansible-playbook)" == ""]
 ansible-playbook configure.yaml -i hosts
 ```
 
-Let the scripts above do the work and wait till the scripts finised. Enjoy 🍜 ☕.
+Let the scripts above do the work and wait till the its finised. Enjoy 🍜 ☕.
+
+Upcoming planned features:
+- Configure DNS over TLS
+- Installing essentials package (code editor, browser, movie player, music player, and any related tools)
+- Configure shell
+- Restoring important keys (ssh & gpg keys)
+- Restoring dotfiles
+
