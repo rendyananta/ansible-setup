@@ -1,0 +1,3 @@
+Match host *.incus
+	User dev
+	IdentityFile ~/.ssh/lxc.id_ed25519
