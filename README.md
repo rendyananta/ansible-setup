@@ -5,7 +5,7 @@ This is my Linux workstation setup. Currently using Ubuntu 22.04, but can be use
 ## How to use
 First thing to do is copy the host, and configure it. If it is localhost then it should contains localhost. 
 ```sh
-cp hosts.example host
+cp hosts.example hosts
 ```
 
 We can modify hosts inside the `hosts` file, if we want to used it to configure another VM or multiple hosts. 
