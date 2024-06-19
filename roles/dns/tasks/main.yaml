@@ -1,0 +1,16 @@
+---
+- name: Installing dnsutils via apt
+  apt: 
+    name: dnsutils
+
+- name: Creating /etc/systemd/resolved.conf.d directory if not exist
+  ansible.builtin.file:
+    path: /etc/systemd/resolved.conf.d
+    state: directory
+
+- name: Copying DNS Over TLS Config resolution through systemd-resolved
+  template: 
+    src: systemd/resolved.conf.d/20-dns-over-tls.conf
+    dest: /etc/systemd/resolved.conf.d/20-dns-over-tls.conf
+  notify: 
+    - restart systemd resolved
