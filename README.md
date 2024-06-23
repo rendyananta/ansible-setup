@@ -10,14 +10,9 @@ cp hosts.example hosts
 
 We can modify hosts inside the `hosts` file, if we want to used it to configure another VM or multiple hosts. 
 
-Run the command below. 
+Run the command below to run the playbook with the given `hosts` file. 
 ```sh
-#!/bin/bash
-if [ "$(which ansible-playbook)" == ""]
-   sudo add-apt-repository --yes --update ppa:ansible/ansible
-   sudo apt install software-properties-common ansible -y 
-
-ansible-playbook configure.yaml -i hosts
+./run.sh
 ```
 
 Let the scripts above do the work and wait till the its finised. Enjoy 🍜 ☕.
