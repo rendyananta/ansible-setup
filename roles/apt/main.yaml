@@ -1,0 +1,22 @@
+---
+- name: Adding custom PPA repositories
+  ansible.builtin.apt_repository:
+    repo: "{{ apt_repo }}"
+- name: Installing mandatory packages via apt
+  ansible.builtin.apt:
+    pkg: 
+      - software-properties-common
+      - apt-transport-https
+      - gpg
+      - curl
+      - vim
+      - git
+      - wget
+      - iputils
+      - netutils
+      - build-essential
+      - jq
+- name: Installing optional packages via apt
+  ansible.builtin.apt:
+    pkg: "{{ apt_pkg }}"
+    

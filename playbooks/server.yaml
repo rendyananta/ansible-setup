@@ -1,0 +1,13 @@
+---
+- name: Configuring server
+  hosts: all
+  become: yes
+  roles:
+    - role: dns
+    - role: incus
+    - role: apt
+      vars: 
+        pkg:
+          - podman
+          - netavark
+          - wireguard
