@@ -20,23 +20,23 @@
 
 - name: Check that ssh key exists
   stat:
-    path: .ssh/lxc.id_ed25519
+    path: "/home/{{ whoami.stdout }}/.ssh/lxc.id_ed25519"
   register: stat_result
 
 - name: Generate Incus user SSH key
-  command: ssh-keygen -t ed25519 -f .ssh/lxc.id_ed25519 -q -N ""
+  command: "ssh-keygen -t ed25519 -f /home/{{ whoami.stdout }}/.ssh/lxc.id_ed25519 -q -N \"\""
   when: not stat_result.stat.exists
 
 - name: Setting up ssh private key permission
   ansible.builtin.file:
-    path: .ssh/lxc.id_ed25519
+    path: "/home/{{ whoami.stdout }}/.ssh/lxc.id_ed25519"
     mode: '0600'
     owner: "{{ whoami.stdout }}"
     group: "{{ whoami.stdout }}"
 
 - name: Setting up ssh public key permission
   ansible.builtin.file:
-    path: .ssh/lxc.id_ed25519.pub
+    path: "/home/{{ whoami.stdout }}/.ssh/lxc.id_ed25519.pub"
     mode: '0644'
     owner: "{{ whoami.stdout }}"
     group: "{{ whoami.stdout }}"
@@ -50,7 +50,7 @@
     dest: .temp-restore-incus/preseed.yaml
 
 - name: Echo public ssh key
-  command: cat .ssh/lxc.id_ed25519.pub
+  command: cat "/home/{{ whoami.stdout }}/.ssh/lxc.id_ed25519.pub"
   register: pubkey
 
 - name: Replace authorized public ssh key into Incus preseed file
@@ -76,7 +76,7 @@
 
 - name: Setting up ssh client config, checking ssh config file if exists
   ansible.builtin.file:
-    path: .ssh/config
+    path: "/home/{{ whoami.stdout }}/.ssh/config"
     state: touch
     mode: '0600'
     owner: "{{ whoami.stdout }}"
@@ -85,7 +85,7 @@
 - name: Checking if ssh has incude config directory
   lineinfile:
     state: absent
-    path: ".ssh/config"
+    path: "/home/{{ whoami.stdout }}/.ssh/config"
     regexp: "^Include conf.d/*"
   check_mode: true
   changed_when: false
@@ -94,13 +94,13 @@
 - name: Updating ssh config to include conf.d directory
   lineinfile:
     state: present
-    path: ".ssh/config"
+    path: "/home/{{ whoami.stdout }}/.ssh/config"
     line: "Include conf.d/*"
   when: check.found == 0
 
 - name: Creating .ssh/conf.d directory
   ansible.builtin.file:
-    path: .ssh/conf.d/
+    path: "/home/{{ whoami.stdout }}/.ssh/conf.d/"
     state: directory
     mode: '0755'
     owner: "{{ whoami.stdout }}"
@@ -109,7 +109,7 @@
 - name: Creating .ssh/conf.d directory
   ansible.builtin.template:
     src: ssh/conf.d/incus
-    dest: .ssh/conf.d/incus
+    dest: "/home/{{ whoami.stdout }}/.ssh/conf.d/incus"
     mode: '0600'
     owner: "{{ whoami.stdout }}"
     group: "{{ whoami.stdout }}"
