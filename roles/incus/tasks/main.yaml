@@ -2,6 +2,12 @@
 - name: Install Incus via apt
   apt: 
     name: incus
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Install Incus via pacman
+  community.general.pacman: 
+    name: incus
+  when: ansible_distribution == 'Arch Linux' or ansible_distribution == 'Manjaro'
 
 - name: Run whoami without become.
   command: whoami
