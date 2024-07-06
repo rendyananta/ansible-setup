@@ -2,6 +2,7 @@
 - name: Adding custom PPA repositories
   ansible.builtin.apt_repository:
     repo: "{{ apt_repo }}"
+  when: apt_repo | default('', true) | trim != ''
 - name: Installing mandatory packages via apt
   ansible.builtin.apt:
     pkg: 
@@ -12,8 +13,8 @@
       - vim
       - git
       - wget
-      - iputils
-      - netutils
+      - iputils-ping
+      - net-tools
       - build-essential
       - jq
 - name: Installing optional packages via apt
