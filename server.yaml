@@ -3,14 +3,11 @@
   hosts: all
   become: yes
   roles:
-    - role: dns
-    - role: incus
     - role: apt
-      vars: 
+      vars:
         apt_pkg:
-          - podman
-          - netavark
-          - wireguard
+          - kitty
+          - nodejs
     - role: php
       vars: 
-        php_version: 8.2
+        php_version: 8.3
